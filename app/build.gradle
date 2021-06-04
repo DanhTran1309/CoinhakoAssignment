@@ -31,6 +31,29 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+    flavorDimensions "version"
+    productFlavors {
+        development {
+            dimension "version"
+            applicationIdSuffix ".dev"
+            versionNameSuffix "-dev"
+            resValue 'string', 'app_name', 'Development Coinhako Assignment'
+            buildConfigField('String', 'BASE_URL', '\"https://www.coinhako.com/\"')
+        }
+        staging {
+            dimension "version"
+            applicationIdSuffix ".staging"
+            versionNameSuffix "-staging"
+            resValue 'string', 'app_name', 'Staging Coinhako Assignment'
+            buildConfigField('String', 'BASE_URL', '\"https://www.coinhako.com/\"')
+        }
+        production {
+            dimension "version"
+            resValue 'string', 'app_name', 'Coinhako Assignment'
+            buildConfigField('String', 'BASE_URL', '\"https://www.coinhako.com/\"')
+        }
+    }
 }
 
 dependencies {

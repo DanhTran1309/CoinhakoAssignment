@@ -9,11 +9,14 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-class AssignmentRetrofit(private val networkUtils: NetworkUtils) {
+class AssignmentRetrofit(
+    private val networkUtils: NetworkUtils,
+    private val baseUrl: String
+) {
 
     private val retrofit: Retrofit by lazy {
         Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(baseUrl)
             .addConverterFactory(GsonConverterFactory.create())
             .client(getOkHttpClientConfig())
             .build()
@@ -36,7 +39,6 @@ class AssignmentRetrofit(private val networkUtils: NetworkUtils) {
     }
 
     companion object {
-        private const val BASE_URL = "https://www.coinhako.com/"
         private const val TIME_OUT = 10L
     }
 }
