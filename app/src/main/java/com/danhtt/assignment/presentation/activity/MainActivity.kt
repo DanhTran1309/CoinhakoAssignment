@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+import android.widget.Toast
+import androidx.navigation.fragment.NavHostFragment
 import com.danhtt.assignment.R
 import com.danhtt.assignment.presentation.receiver.NetworkReceiver
 import com.danhtt.assignment.presentation.viewmodel.CurrencyViewModel
@@ -14,8 +16,10 @@ import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
-    private val viewModel: CurrencyViewModel by viewModel()
     private lateinit var networkReceiver: NetworkReceiver
+
+    private val viewModel: CurrencyViewModel by viewModel()
+    private var backPressedTime = 0L
 
     @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,6 +47,23 @@ class MainActivity : AppCompatActivity() {
         unregisterReceiver(networkReceiver)
     }
 
+    override fun onBackPressed() {
+        supportFragmentManager.findFragmentById(R.id.nav_host_fragment)?.let {
+            if (NavHostFragment.findNavController(it).currentDestination?.id == R.id.mainFragment) {
+                if (backPressedTime + TIME_INTERVAL > System.currentTimeMillis()) {
+                    super.onBackPressed()
+                    return
+                } else {
+                    Toast.makeText(this, "Tap back button again to exit", Toast.LENGTH_SHORT).show()
+                }
+                backPressedTime = System.currentTimeMillis()
+            } else {
+                super.onBackPressed()
+            }
+        } ?: super.onBackPressed()
+
+    }
+
     private fun initNetworkReceiver() {
         networkReceiver = NetworkReceiver { isConnected ->
             if (isConnected) {
@@ -55,5 +76,9 @@ class MainActivity : AppCompatActivity() {
                 viewModel.clearDisposable()
             }
         }
+    }
+
+    companion object {
+        private const val TIME_INTERVAL = 2000L
     }
 }
