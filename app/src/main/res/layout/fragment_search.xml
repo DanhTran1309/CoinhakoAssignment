@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imv_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/actionBarItemBackground"
+        android:padding="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_arrow_back" />
+
+    <View
+        android:id="@+id/view_bg_search_bar"
+        android:layout_width="0dp"
+        android:layout_height="42dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/bg_search_bar"
+        app:layout_constraintBottom_toBottomOf="@id/imv_back"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/imv_back"
+        app:layout_constraintTop_toTopOf="@id/imv_back" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@id/view_bg_search_bar"
+        app:layout_constraintEnd_toEndOf="@id/view_bg_search_bar"
+        app:layout_constraintStart_toStartOf="@id/view_bg_search_bar"
+        app:layout_constraintTop_toTopOf="@id/view_bg_search_bar">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imv_search_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="9dp"
+            app:srcCompat="@drawable/ic_white_baseline_search" />
+
+        <EditText
+            android:id="@+id/edt_search_input"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:autofillHints=""
+            android:background="@android:color/transparent"
+            android:gravity="start|center_vertical"
+            android:hint="@string/label_search_hint"
+            android:inputType="text"
+            android:textColor="@color/white"
+            android:textColorHint="#80FFFFFF"
+            android:textCursorDrawable="@drawable/white_cursor" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imv_clear_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="9dp"
+            android:background="?attr/actionBarItemBackground"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_white_baseline_clear" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_currencies"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="4dp"
+        android:overScrollMode="never"
+        android:paddingHorizontal="16dp"
+        android:splitMotionEvents="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/imv_back" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_empty_data"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

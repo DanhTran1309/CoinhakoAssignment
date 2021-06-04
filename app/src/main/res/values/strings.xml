@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">CoinhakoAssignment</string>
+    <string name="label_search_hint">Search Currency</string>
+    <string name="label_cancel">Cancel</string>
+    <string name="label_name">Name</string>
+    <string name="label_price">Last Price</string>
+    <string name="text_price_with_currency">%s $</string>
+    <string name="message_empty_data">No currencies records yet</string>
+    <string name="message_empty_favorite">No favorite currencies yet</string>
+    <string name="message_search_empty_records">No records found</string>
+    <string name="message_no_internet_connection">No internet connection</string>
 </resources>
