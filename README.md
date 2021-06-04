@@ -10,7 +10,8 @@
     - Display currency list
     - Filter currency list by name or price (ascending and descesding)
     - Add currency favorite
-    - Search currency by name 
+    - Search currency by name
+    - Auto update price every 30 seconds 
 
 ### Components used in project
 - Language: Kotlin
