@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.danhtt.assignment.R
 import com.danhtt.assignment.common.presentation.clickWithDebounce
+import com.danhtt.assignment.domain.model.StateEvent
 import com.danhtt.assignment.presentation.viewmodel.CurrencyViewModel
 import com.danhtt.assignment.presentation.SortByEnum
 import com.danhtt.assignment.presentation.adapter.CurrencyAdapter
@@ -60,27 +61,29 @@ class CurrencyListFragment : Fragment() {
     }
 
     private fun observeDataChanged() {
-        viewModel.loadingLiveData.observe(viewLifecycleOwner, {
-            val isLoading = it ?: false
-            if (isLoading) {
-                showLoadingView()
-            } else {
-                displayData()
-            }
-        })
-
-        viewModel.currenciesLiveData.observe(viewLifecycleOwner, {
+        viewModel.currenciesStateEvent.observe(viewLifecycleOwner, {
             swipe_refresh_currencies?.let { swipeRefresh ->
                 if (swipeRefresh.isRefreshing) {
                     swipeRefresh.isRefreshing = false
                 }
             }
-            if (it.isNullOrEmpty()) {
-                return@observe
+            when (it) {
+                is StateEvent.Loading -> showLoadingView()
+                is StateEvent.Success -> {
+                    displayData()
+                    val data = it.data
+                    if (data.isNullOrEmpty()) {
+                        return@observe
+                    }
+                    val list = viewModel.sortPriceList(viewModel.getCurrentSortedBy())
+                    currencyAdapter.updateData(if (isFavorite) list.filter { price -> price.isFavorite } else list)
+                    checkEmptyData()
+                }
+                is StateEvent.Failure -> {
+                    displayData()
+                }
             }
-            val list = viewModel.sortPriceList(viewModel.getCurrentSortedBy())
-            currencyAdapter.updateData(if (isFavorite) list.filter { price -> price.isFavorite } else list)
-            checkEmptyData()
+
         })
 
         viewModel.sortByLiveData.observe(viewLifecycleOwner, {

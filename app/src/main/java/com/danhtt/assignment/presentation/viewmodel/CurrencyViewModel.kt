@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.danhtt.assignment.domain.model.Currency
+import com.danhtt.assignment.domain.model.StateEvent
 import com.danhtt.assignment.presentation.SortByEnum
 import com.danhtt.assignment.presentation.usecase.AddFavoriteUseCase
 import com.danhtt.assignment.presentation.usecase.DeleteFavoriteUseCase
@@ -23,10 +24,8 @@ class CurrencyViewModel(
     private val deleteFavoriteUseCase: DeleteFavoriteUseCase,
     private val sortByUseCase: SortByUseCase
 ) : ViewModel() {
-    private val _loadingLiveData = MutableLiveData<Boolean>()
-    val loadingLiveData: LiveData<Boolean> = _loadingLiveData
-    private val _currenciesLiveData = MutableLiveData<List<Currency>>()
-    val currenciesLiveData: LiveData<List<Currency>> = _currenciesLiveData
+    private val _currenciesStateEvent = MutableLiveData<StateEvent<List<Currency>>>()
+    val currenciesStateEvent: LiveData<StateEvent<List<Currency>>> = _currenciesStateEvent
     private val _sortByLiveData = MutableLiveData(SortByEnum.NONE)
     val sortByLiveData: LiveData<SortByEnum> = _sortByLiveData
 
@@ -39,19 +38,15 @@ class CurrencyViewModel(
 
     fun getAllCurrencies(isShowLoading: Boolean = false) {
         if (isShowLoading) {
-            _loadingLiveData.value = true
+            _currenciesStateEvent.value = StateEvent.Loading()
         }
         viewModelScope.launch {
             try {
                 val prices = getAllCurrenciesUseCase.fetch(COUNTER_CURRENCY)
-                _currenciesLiveData.value = prices
+                _currenciesStateEvent.value = prices
             } catch (e: Exception) {
                 e.printStackTrace()
-                _currenciesLiveData.value = emptyList()
-            } finally {
-                if (isShowLoading) {
-                    _loadingLiveData.value = false
-                }
+                _currenciesStateEvent.value = StateEvent.Failure(e.message)
             }
         }
     }
@@ -79,17 +74,21 @@ class CurrencyViewModel(
     }
 
     fun sortPriceList(sortBy: SortByEnum): List<Currency> {
-        val currencies = _currenciesLiveData.value ?: emptyList()
-        if (currencies.isEmpty()) {
-            return emptyList()
+        val dataEvent = _currenciesStateEvent.value ?: return emptyList()
+        if (dataEvent is StateEvent.Success) {
+            val currencies = dataEvent.data
+            if (currencies.isEmpty()) {
+                return emptyList()
+            }
+            return when (sortBy) {
+                SortByEnum.NONE -> currencies
+                SortByEnum.NAME_ASCENDING -> sortByUseCase.sortByNameAscending(currencies)
+                SortByEnum.NAME_DESCENDING -> sortByUseCase.sortByNameDescending(currencies)
+                SortByEnum.PRICE_ASCENDING -> sortByUseCase.sortByPriceAscending(currencies)
+                SortByEnum.PRICE_DESCENDING -> sortByUseCase.sortByPriceDescending(currencies)
+            }
         }
-        return when (sortBy) {
-            SortByEnum.NONE -> currencies
-            SortByEnum.NAME_ASCENDING -> sortByUseCase.sortByNameAscending(currencies)
-            SortByEnum.NAME_DESCENDING -> sortByUseCase.sortByNameDescending(currencies)
-            SortByEnum.PRICE_ASCENDING -> sortByUseCase.sortByPriceAscending(currencies)
-            SortByEnum.PRICE_DESCENDING -> sortByUseCase.sortByPriceDescending(currencies)
-        }
+        return emptyList()
     }
 
     fun updateSortBy(sortBy: SortByEnum) {
@@ -116,14 +115,17 @@ class CurrencyViewModel(
     }
 
     private fun updateFavoriteItem(name: String, isFavorite: Boolean) {
-        val currencies = _currenciesLiveData.value ?: emptyList()
-        currencies.map {
-            if (it.name == name) {
-                it.isFavorite = isFavorite
+        val dataEvent = _currenciesStateEvent.value ?: return
+        if (dataEvent is StateEvent.Success) {
+            val currencies = dataEvent.data
+            currencies.map {
+                if (it.name == name) {
+                    it.isFavorite = isFavorite
+                }
+                it
             }
-            it
+            _currenciesStateEvent.value = StateEvent.Success(currencies)
         }
-        _currenciesLiveData.value = currencies
     }
 
     companion object {

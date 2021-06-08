@@ -10,6 +10,8 @@ import android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 import android.widget.Toast
 import androidx.navigation.fragment.NavHostFragment
 import com.danhtt.assignment.R
+import com.danhtt.assignment.domain.model.Currency
+import com.danhtt.assignment.domain.model.StateEvent
 import com.danhtt.assignment.presentation.receiver.NetworkReceiver
 import com.danhtt.assignment.presentation.viewmodel.CurrencyViewModel
 import kotlinx.android.synthetic.main.activity_main.*
@@ -68,7 +70,11 @@ class MainActivity : AppCompatActivity() {
         networkReceiver = NetworkReceiver { isConnected ->
             if (isConnected) {
                 tv_no_internet_connection?.visibility = View.GONE
-                viewModel.getAllCurrencies(viewModel.currenciesLiveData.value.isNullOrEmpty())
+                val currencies: List<Currency> = when (val event = viewModel.currenciesStateEvent.value) {
+                    is StateEvent.Success -> event.data
+                    else -> emptyList()
+                }
+                viewModel.getAllCurrencies(currencies.isNullOrEmpty())
                 viewModel.clearDisposable()
                 viewModel.startIntervalUpdatePrices()
             } else {

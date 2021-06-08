@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.danhtt.assignment.R
 import com.danhtt.assignment.common.presentation.clickWithDebounce
+import com.danhtt.assignment.domain.model.StateEvent
 import com.danhtt.assignment.presentation.viewmodel.CurrencyViewModel
 import com.danhtt.assignment.presentation.adapter.CurrencyAdapter
 import kotlinx.android.synthetic.main.fragment_search.*
@@ -79,17 +80,24 @@ class SearchFragment : Fragment() {
     }
 
     private fun observeDataChanged() {
-        viewModel.currenciesLiveData.observe(viewLifecycleOwner, {
-            if (it.isNullOrEmpty()) {
-                return@observe
+        viewModel.currenciesStateEvent.observe(viewLifecycleOwner, {
+            when (it) {
+                is StateEvent.Loading -> Unit
+                is StateEvent.Success -> {
+                    val data = it.data
+                    if (data.isNullOrEmpty()) {
+                        return@observe
+                    }
+                    val searchText = edt_search_input?.text?.trim()
+                    currencyAdapter.updateData(data, searchText.isNullOrEmpty())
+                    checkEmptyData(false)
+                    if (searchText.isNullOrEmpty()) {
+                        return@observe
+                    }
+                    currencyAdapter.filter.filter(searchText) { checkEmptyData(true) }
+                }
+                is StateEvent.Failure -> Unit
             }
-            val searchText = edt_search_input?.text?.trim()
-            currencyAdapter.updateData(it, searchText.isNullOrEmpty())
-            checkEmptyData(false)
-            if (searchText.isNullOrEmpty()) {
-                return@observe
-            }
-            currencyAdapter.filter.filter(searchText) { checkEmptyData(true) }
         })
     }
 
