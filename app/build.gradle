@@ -54,6 +54,10 @@ android {
             buildConfigField('String', 'BASE_URL', '\"https://www.coinhako.com/\"')
         }
     }
+
+    buildFeatures {
+        dataBinding true
+    }
 }
 
 dependencies {

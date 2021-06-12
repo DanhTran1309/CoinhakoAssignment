@@ -1,88 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingVertical="12dp">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <com.makeramen.roundedimageview.RoundedImageView
-        android:id="@+id/imv_currency_icon"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <data>
+        <variable
+            name="currency"
+            type="com.danhtt.assignment.domain.model.Currency" />
+    </data>
 
-    <TextView
-        android:id="@+id/tv_currency_base"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:textAllCaps="true"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:includeFontPadding="false"
-        app:layout_constraintBottom_toTopOf="@id/tv_currency_name"
-        app:layout_constraintStart_toEndOf="@id/imv_currency_icon"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed"
-        tools:text="BTC" />
+        android:paddingVertical="12dp">
 
-    <TextView
-        android:id="@+id/tv_currency_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:minWidth="50dp"
-        android:textSize="12sp"
-        android:includeFontPadding="false"
-        android:layout_marginTop="2dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@id/tv_currency_base"
-        app:layout_constraintTop_toBottomOf="@id/tv_currency_base"
-        tools:text="Bitcoin" />
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/imv_currency_icon"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            setIconUrl="@{currency.icon}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/tv_sell_price"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="180dp"
-        android:layout_marginEnd="16dp"
-        android:textColor="#00cc00"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:includeFontPadding="false"
-        app:layout_constraintBottom_toTopOf="@id/tv_buy_price"
-        app:layout_constraintEnd_toStartOf="@id/imv_favorite"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed"
-        tools:text="150.55 $" />
+        <TextView
+            android:id="@+id/tv_currency_base"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@{currency.base}"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:includeFontPadding="false"
+            app:layout_constraintBottom_toTopOf="@id/tv_currency_name"
+            app:layout_constraintStart_toEndOf="@id/imv_currency_icon"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="BTC" />
 
-    <TextView
-        android:id="@+id/tv_buy_price"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textColor="#FF0000"
-        android:textSize="12sp"
-        android:textStyle="bold"
-        android:includeFontPadding="false"
-        android:layout_marginTop="2dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/tv_sell_price"
-        app:layout_constraintStart_toStartOf="@id/tv_sell_price"
-        app:layout_constraintTop_toBottomOf="@id/tv_sell_price"
-        tools:text="150.1 $" />
+        <TextView
+            android:id="@+id/tv_currency_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="50dp"
+            android:text="@{currency.name}"
+            android:textSize="12sp"
+            android:includeFontPadding="false"
+            android:layout_marginTop="2dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/tv_currency_base"
+            app:layout_constraintTop_toBottomOf="@id/tv_currency_base"
+            tools:text="Bitcoin" />
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/imv_favorite"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="?attr/actionBarItemBackground"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_star_border" />
+        <TextView
+            android:id="@+id/tv_sell_price"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="180dp"
+            android:layout_marginEnd="16dp"
+            android:text="@{@string/text_price_with_currency(currency.sellPrice)}"
+            android:textColor="#00cc00"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:includeFontPadding="false"
+            app:layout_constraintBottom_toTopOf="@id/tv_buy_price"
+            app:layout_constraintEnd_toStartOf="@id/imv_favorite"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="150.55 $" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/tv_buy_price"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@{@string/text_price_with_currency(currency.buyPrice)}"
+            android:textColor="#FF0000"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:includeFontPadding="false"
+            android:layout_marginTop="2dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/tv_sell_price"
+            app:layout_constraintStart_toStartOf="@id/tv_sell_price"
+            app:layout_constraintTop_toBottomOf="@id/tv_sell_price"
+            tools:text="150.1 $" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imv_favorite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/actionBarItemBackground"
+            setIsFavorite="@{currency.favorite}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_baseline_star_border" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

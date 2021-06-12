@@ -4,20 +4,23 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.danhtt.assignment.R
 import com.danhtt.assignment.common.presentation.clickWithDebounce
+import com.danhtt.assignment.databinding.FragmentCurrencyListBinding
 import com.danhtt.assignment.domain.model.StateEvent
 import com.danhtt.assignment.presentation.viewmodel.CurrencyViewModel
 import com.danhtt.assignment.presentation.SortByEnum
 import com.danhtt.assignment.presentation.adapter.CurrencyAdapter
-import kotlinx.android.synthetic.main.fragment_currency_list.*
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 
 class CurrencyListFragment : Fragment() {
     private val viewModel: CurrencyViewModel by sharedViewModel()
+
+    private lateinit var binding: FragmentCurrencyListBinding
     private lateinit var currencyAdapter: CurrencyAdapter
     private var isFavorite = false
 
@@ -31,8 +34,10 @@ class CurrencyListFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_currency_list, container, false)
+    ): View {
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_currency_list, container, false)
+        binding.lifecycleOwner = viewLifecycleOwner
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -45,7 +50,7 @@ class CurrencyListFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        shimmer_frame_layout?.stopShimmer()
+        binding.shimmerFrameLayout.stopShimmer()
     }
 
     private fun initAdapter() {
@@ -62,7 +67,7 @@ class CurrencyListFragment : Fragment() {
 
     private fun observeDataChanged() {
         viewModel.currenciesStateEvent.observe(viewLifecycleOwner, {
-            swipe_refresh_currencies?.let { swipeRefresh ->
+            binding.swipeRefreshCurrencies.let { swipeRefresh ->
                 if (swipeRefresh.isRefreshing) {
                     swipeRefresh.isRefreshing = false
                 }
@@ -95,19 +100,23 @@ class CurrencyListFragment : Fragment() {
     }
 
     private fun showLoadingView() {
-        shimmer_frame_layout?.visibility = View.VISIBLE
-        shimmer_frame_layout?.startShimmer()
-        recycler_currencies?.visibility = View.GONE
+        binding.shimmerFrameLayout.apply {
+            visibility = View.VISIBLE
+            startShimmer()
+        }
+        binding.recyclerCurrencies.visibility = View.GONE
     }
 
     private fun displayData() {
-        shimmer_frame_layout?.visibility = View.GONE
-        shimmer_frame_layout?.stopShimmer()
-        recycler_currencies?.visibility = View.VISIBLE
+        binding.shimmerFrameLayout.apply {
+            visibility = View.GONE
+            stopShimmer()
+        }
+        binding.recyclerCurrencies.visibility = View.VISIBLE
     }
 
     private fun setupRecyclerView() {
-        recycler_currencies?.apply {
+        binding.recyclerCurrencies.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = currencyAdapter
             addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
@@ -115,12 +124,12 @@ class CurrencyListFragment : Fragment() {
     }
 
     private fun setupSwipeRefreshLayout() {
-        swipe_refresh_currencies?.let {
+        binding.swipeRefreshCurrencies.apply {
             if (isFavorite) {
-                it.isEnabled = false
-                return@let
+                isEnabled = false
+                return@apply
             }
-            it.setOnRefreshListener {
+            setOnRefreshListener {
                 viewModel.getAllCurrencies()
                 viewModel.clearDisposable()
                 viewModel.startIntervalUpdatePrices()
@@ -130,22 +139,23 @@ class CurrencyListFragment : Fragment() {
 
     private fun checkEmptyData() {
         if (currencyAdapter.itemCount > 0) {
-            constraint_labels?.visibility = View.VISIBLE
-            recycler_currencies?.visibility = View.VISIBLE
-            tv_empty_data?.visibility = View.GONE
+            binding.constraintLabels.visibility = View.VISIBLE
+            binding.recyclerCurrencies.visibility = View.VISIBLE
+            binding.tvEmptyData.visibility = View.GONE
             return
         }
-        constraint_labels?.visibility = View.GONE
-        recycler_currencies?.visibility = View.GONE
-        tv_empty_data?.let {
-            it.visibility = View.VISIBLE
-            it.text = getString(if (isFavorite) R.string.message_empty_favorite else R.string.message_empty_data)
+        binding.constraintLabels.visibility = View.GONE
+        binding.recyclerCurrencies.visibility = View.GONE
+        binding.tvEmptyData.apply {
+            visibility = View.VISIBLE
+            text =
+                getString(if (isFavorite) R.string.message_empty_favorite else R.string.message_empty_data)
         }
     }
 
     private fun setupSortClickListener() {
-        view_name_filter?.clickWithDebounce { sortByName() }
-        view_price_filter?.clickWithDebounce { sortByPrice() }
+        binding.viewNameFilter.clickWithDebounce { sortByName() }
+        binding.viewPriceFilter.clickWithDebounce { sortByPrice() }
     }
 
     private fun sortByName() {
@@ -155,7 +165,7 @@ class CurrencyListFragment : Fragment() {
             return
         }
         if (currentSortBy == SortByEnum.NAME_ASCENDING) {
-             viewModel.updateSortBy(SortByEnum.NAME_DESCENDING)
+            viewModel.updateSortBy(SortByEnum.NAME_DESCENDING)
             return
         }
         viewModel.updateSortBy(SortByEnum.NONE)
@@ -175,19 +185,19 @@ class CurrencyListFragment : Fragment() {
     }
 
     private fun clearAllSortArrow() {
-        imv_name_up?.alpha = 0.5f
-        imv_name_down?.alpha = 0.5f
-        imv_price_up?.alpha = 0.5f
-        imv_price_down?.alpha = 0.5f
+        binding.imvNameUp.alpha = 0.5f
+        binding.imvNameDown.alpha = 0.5f
+        binding.imvPriceUp.alpha = 0.5f
+        binding.imvPriceDown.alpha = 0.5f
     }
 
     private fun updateSortByArrow(sortByEnum: SortByEnum) {
         clearAllSortArrow()
         when (sortByEnum) {
-            SortByEnum.NAME_ASCENDING -> imv_name_up?.alpha = 1.0f
-            SortByEnum.NAME_DESCENDING -> imv_name_down?.alpha = 1.0f
-            SortByEnum.PRICE_ASCENDING -> imv_price_up?.alpha = 1.0f
-            SortByEnum.PRICE_DESCENDING -> imv_price_down?.alpha = 1.0f
+            SortByEnum.NAME_ASCENDING -> binding.imvNameUp.alpha = 1.0f
+            SortByEnum.NAME_DESCENDING -> binding.imvNameDown.alpha = 1.0f
+            SortByEnum.PRICE_ASCENDING -> binding.imvPriceUp.alpha = 1.0f
+            SortByEnum.PRICE_DESCENDING -> binding.imvPriceDown.alpha = 1.0f
             SortByEnum.NONE -> Unit
         }
     }

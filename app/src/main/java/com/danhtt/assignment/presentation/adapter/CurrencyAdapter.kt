@@ -4,8 +4,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
+import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.danhtt.assignment.R
+import com.danhtt.assignment.databinding.AdapterCurrencyItemBinding
 import com.danhtt.assignment.domain.model.Currency
 import com.danhtt.assignment.presentation.usecase.FilterUseCase
 import org.koin.core.KoinComponent
@@ -19,8 +22,13 @@ class CurrencyAdapter : RecyclerView.Adapter<CurrencyViewHolder>(), Filterable, 
     private var onFavoriteClickListener: ((Currency) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CurrencyViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.adapter_currency_item, parent, false)
-        return CurrencyViewHolder(view)
+        val binding: AdapterCurrencyItemBinding = DataBindingUtil.inflate(
+            LayoutInflater.from(parent.context),
+            R.layout.adapter_currency_item,
+            parent,
+            false
+        )
+        return CurrencyViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: CurrencyViewHolder, position: Int) {
@@ -43,8 +51,6 @@ class CurrencyAdapter : RecyclerView.Adapter<CurrencyViewHolder>(), Filterable, 
         onFavoriteClickListener = listener
     }
 
-    fun filteredSize() = currencyListFiltered.size
-
     override fun getFilter(): Filter {
         return object :Filter() {
             override fun performFiltering(query: CharSequence?): FilterResults {
@@ -53,9 +59,12 @@ class CurrencyAdapter : RecyclerView.Adapter<CurrencyViewHolder>(), Filterable, 
 
             @Suppress("UNCHECKED_CAST")
             override fun publishResults(p0: CharSequence?, filterResults: FilterResults?) {
+                val currencies = (filterResults?.values as? List<Currency>) ?: currencyList
+                val diffCallback = CurrencyDiffUtil(currencyListFiltered, currencies)
+                val diffResult = DiffUtil.calculateDiff(diffCallback)
                 currencyListFiltered.clear()
-                currencyListFiltered.addAll((filterResults?.values as? List<Currency>) ?: currencyList)
-                notifyDataSetChanged()
+                currencyListFiltered.addAll(currencies)
+                diffResult.dispatchUpdatesTo(this@CurrencyAdapter)
             }
         }
     }

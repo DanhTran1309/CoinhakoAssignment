@@ -1,5 +1,6 @@
 package com.danhtt.assignment.presentation.viewmodel
 
+import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -29,11 +30,18 @@ class CurrencyViewModel(
     private val _sortByLiveData = MutableLiveData(SortByEnum.NONE)
     val sortByLiveData: LiveData<SortByEnum> = _sortByLiveData
 
+    private val _noInternetConnectionVisibility = MutableLiveData(View.GONE)
+    val noInternetConnectionVisibility: LiveData<Int> = _noInternetConnectionVisibility
+
     private val compositeDisposable = CompositeDisposable()
 
     override fun onCleared() {
         super.onCleared()
         compositeDisposable.dispose()
+    }
+
+    fun setNoInternetConnectionVisibility(visibility: Int) {
+        _noInternetConnectionVisibility.value = visibility
     }
 
     fun getAllCurrencies(isShowLoading: Boolean = false) {
@@ -117,7 +125,7 @@ class CurrencyViewModel(
     private fun updateFavoriteItem(name: String, isFavorite: Boolean) {
         val dataEvent = _currenciesStateEvent.value ?: return
         if (dataEvent is StateEvent.Success) {
-            val currencies = dataEvent.data
+            val currencies = dataEvent.data.toMutableList()
             currencies.map {
                 if (it.name == name) {
                     it.isFavorite = isFavorite

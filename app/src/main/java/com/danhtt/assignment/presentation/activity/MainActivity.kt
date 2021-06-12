@@ -8,17 +8,19 @@ import android.os.Bundle
 import android.view.View
 import android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 import android.widget.Toast
+import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.NavHostFragment
 import com.danhtt.assignment.R
+import com.danhtt.assignment.databinding.ActivityMainBinding
 import com.danhtt.assignment.domain.model.Currency
 import com.danhtt.assignment.domain.model.StateEvent
 import com.danhtt.assignment.presentation.receiver.NetworkReceiver
 import com.danhtt.assignment.presentation.viewmodel.CurrencyViewModel
-import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
     private lateinit var networkReceiver: NetworkReceiver
+    private lateinit var binding: ActivityMainBinding
 
     private val viewModel: CurrencyViewModel by viewModel()
     private var backPressedTime = 0L
@@ -31,7 +33,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding.let {
+            it.viewModel = viewModel
+            it.lifecycleOwner = this
+        }
         initNetworkReceiver()
 
         viewModel.getAllCurrencies(true)
@@ -69,7 +75,7 @@ class MainActivity : AppCompatActivity() {
     private fun initNetworkReceiver() {
         networkReceiver = NetworkReceiver { isConnected ->
             if (isConnected) {
-                tv_no_internet_connection?.visibility = View.GONE
+                viewModel.setNoInternetConnectionVisibility(View.GONE)
                 val currencies: List<Currency> = when (val event = viewModel.currenciesStateEvent.value) {
                     is StateEvent.Success -> event.data
                     else -> emptyList()
@@ -78,7 +84,7 @@ class MainActivity : AppCompatActivity() {
                 viewModel.clearDisposable()
                 viewModel.startIntervalUpdatePrices()
             } else {
-                tv_no_internet_connection?.visibility = View.VISIBLE
+                viewModel.setNoInternetConnectionVisibility(View.VISIBLE)
                 viewModel.clearDisposable()
             }
         }
