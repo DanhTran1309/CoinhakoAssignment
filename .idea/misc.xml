@@ -4,6 +4,8 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.10778985507246377" />
+        <entry key="data/src/main/res/drawable/white_cursor.xml" value="0.18333333333333332" />
+        <entry key="presentation/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.16927083333333334" />
       </map>
     </option>
   </component>

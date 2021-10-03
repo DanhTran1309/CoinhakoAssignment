@@ -9,13 +9,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.danhtt.assignment.R
 import com.danhtt.assignment.common.clickWithDebounce
-import com.danhtt.assignment.databinding.FragmentCurrencyListBinding
 import com.danhtt.assignment.domain.model.StateEvent
+import com.danhtt.assignment.presentation.R
 import com.danhtt.assignment.presentation.viewmodel.CurrencyViewModel
 import com.danhtt.assignment.presentation.SortByEnum
 import com.danhtt.assignment.presentation.adapter.CurrencyAdapter
+import com.danhtt.assignment.presentation.databinding.FragmentCurrencyListBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

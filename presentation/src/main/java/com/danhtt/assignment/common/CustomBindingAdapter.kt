@@ -4,7 +4,7 @@ import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
-import com.danhtt.assignment.R
+import com.danhtt.assignment.presentation.R
 
 @BindingAdapter(value = ["setIconUrl"])
 fun ImageView.loadIcon(iconUrl: String) {

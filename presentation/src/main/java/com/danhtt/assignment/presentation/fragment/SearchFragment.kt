@@ -14,12 +14,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.danhtt.assignment.R
 import com.danhtt.assignment.common.clickWithDebounce
-import com.danhtt.assignment.databinding.FragmentSearchBinding
 import com.danhtt.assignment.domain.model.StateEvent
+import com.danhtt.assignment.presentation.R
 import com.danhtt.assignment.presentation.viewmodel.CurrencyViewModel
 import com.danhtt.assignment.presentation.adapter.CurrencyAdapter
+import com.danhtt.assignment.presentation.databinding.FragmentSearchBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

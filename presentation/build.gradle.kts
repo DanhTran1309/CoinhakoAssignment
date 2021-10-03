@@ -3,6 +3,7 @@ plugins {
     id("kotlin-android")
     id("kotlin-android-extensions")
     id("kotlin-kapt")
+    id("dagger.hilt.android.plugin")
 }
 
 android {
@@ -36,21 +37,18 @@ android {
         }
     }
 
-    setPublishNonDefault(true)
-    flavorDimensions("version")
-    productFlavors {
-        create("development") {
-            dimension = "version"
-            buildConfigField("String", "BASE_URL", "\"https://www.coinhako.com/\"")
-        }
-        create("staging") {
-            dimension = "version"
-            buildConfigField("String", "BASE_URL", "\"https://www.coinhako.com/\"")
-        }
-        create("production") {
-            dimension = "version"
-            buildConfigField("String", "BASE_URL", "\"https://www.coinhako.com/\"")
-        }
+    buildFeatures {
+        dataBinding = true
+    }
+}
+
+kapt {
+    correctErrorTypes = true
+    javacOptions {
+        // These options are normally set automatically via the Hilt Gradle plugin, but we
+        // set them manually to workaround a bug in the Kotlin 1.5.20
+        option("-Adagger.fastInit=ENABLED")
+        option("-Adagger.hilt.android.internal.disableAndroidSuperclassValidation=true")
     }
 }
 
@@ -62,18 +60,30 @@ dependencies {
     implementation(Dependencies.coreKTX)
     implementation(Dependencies.appcompat)
     implementation(Dependencies.material)
+    implementation(Dependencies.constraintLayout)
+    implementation(Dependencies.swipeRefreshLayout)
+
+    implementation(Dependencies.lifecycleViewModelKTX)
+    implementation(Dependencies.lifecycleLiveDataKTX)
 
     implementation(Dependencies.coroutinesAndroid)
     implementation(Dependencies.coroutinesCore)
 
-    implementation(Dependencies.retrofit)
-    implementation(Dependencies.retrofitConverterGson)
-
     implementation(Dependencies.gson)
 
-    implementation(Dependencies.roomRuntime)
-    kapt(Dependencies.roomCompiler)
-    implementation(Dependencies.roomKTX)
+    implementation(Dependencies.rxAndroid)
+    implementation(Dependencies.rxjava)
+    implementation(Dependencies.rxKotlin)
+
+    implementation(Dependencies.roundedImageView)
+
+    implementation(Dependencies.glide)
+    annotationProcessor(Dependencies.glideCompiler)
+
+    implementation(Dependencies.shimmer)
+
+    implementation(Dependencies.navigationFragment)
+    implementation(Dependencies.navigationUI)
 
     implementation(Dependencies.hiltAndroid)
     kapt(Dependencies.hiltAndroidCompiler)

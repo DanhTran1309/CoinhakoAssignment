@@ -35,45 +35,11 @@ android {
             jvmTarget = "1.8"
         }
     }
-
-    setPublishNonDefault(true)
-    flavorDimensions("version")
-    productFlavors {
-        create("development") {
-            dimension = "version"
-            buildConfigField("String", "BASE_URL", "\"https://www.coinhako.com/\"")
-        }
-        create("staging") {
-            dimension = "version"
-            buildConfigField("String", "BASE_URL", "\"https://www.coinhako.com/\"")
-        }
-        create("production") {
-            dimension = "version"
-            buildConfigField("String", "BASE_URL", "\"https://www.coinhako.com/\"")
-        }
-    }
 }
 
 dependencies {
-    implementation(project(":domain"))
-    implementation(project(":common"))
-
     implementation(Dependencies.kotlinStdlib)
     implementation(Dependencies.coreKTX)
-    implementation(Dependencies.appcompat)
-    implementation(Dependencies.material)
-
-    implementation(Dependencies.coroutinesAndroid)
-    implementation(Dependencies.coroutinesCore)
-
-    implementation(Dependencies.retrofit)
-    implementation(Dependencies.retrofitConverterGson)
-
-    implementation(Dependencies.gson)
-
-    implementation(Dependencies.roomRuntime)
-    kapt(Dependencies.roomCompiler)
-    implementation(Dependencies.roomKTX)
 
     implementation(Dependencies.hiltAndroid)
     kapt(Dependencies.hiltAndroidCompiler)

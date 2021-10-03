@@ -11,10 +11,10 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
-import com.danhtt.assignment.R
-import com.danhtt.assignment.databinding.ActivityMainBinding
 import com.danhtt.assignment.domain.model.Currency
 import com.danhtt.assignment.domain.model.StateEvent
+import com.danhtt.assignment.presentation.R
+import com.danhtt.assignment.presentation.databinding.ActivityMainBinding
 import com.danhtt.assignment.presentation.receiver.NetworkReceiver
 import com.danhtt.assignment.presentation.viewmodel.CurrencyViewModel
 import dagger.hilt.android.AndroidEntryPoint

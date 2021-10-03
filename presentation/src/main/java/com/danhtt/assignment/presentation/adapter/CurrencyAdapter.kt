@@ -7,10 +7,10 @@ import android.widget.Filterable
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.danhtt.assignment.R
-import com.danhtt.assignment.databinding.AdapterCurrencyItemBinding
 import com.danhtt.assignment.domain.model.Currency
 import com.danhtt.assignment.domain.usecase.FilterUseCase
+import com.danhtt.assignment.presentation.R
+import com.danhtt.assignment.presentation.databinding.AdapterCurrencyItemBinding
 import javax.inject.Inject
 
 class CurrencyAdapter @Inject constructor(

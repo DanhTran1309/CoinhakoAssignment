@@ -46,21 +46,18 @@ android {
             applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev"
             resValue("string", "app_name", "Development Coinhako Assignment")
-            buildConfigField("String", "BASE_URL", "\"https://www.coinhako.com/\"")
         }
         create("staging") {
             dimension = "version"
             applicationIdSuffix = ".staging"
             versionNameSuffix = "-staging"
             resValue("string", "app_name", "Staging Coinhako Assignment")
-            buildConfigField("String", "BASE_URL", "\"https://www.coinhako.com/\"")
         }
         create("production") {
             dimension = "version"
             applicationIdSuffix = ""
             versionNameSuffix = ""
             resValue("string", "app_name", "Coinhako Assignment")
-            buildConfigField("String", "BASE_URL", "\"https://www.coinhako.com/\"")
         }
     }
 
@@ -69,53 +66,16 @@ android {
     }
 }
 
-kapt {
-    correctErrorTypes = true
-    javacOptions {
-        // These options are normally set automatically via the Hilt Gradle plugin, but we
-        // set them manually to workaround a bug in the Kotlin 1.5.20
-        option("-Adagger.fastInit=ENABLED")
-        option("-Adagger.hilt.android.internal.disableAndroidSuperclassValidation=true")
-    }
-}
-
 dependencies {
+    implementation(project(":common"))
     implementation(project(":data"))
     implementation(project(":domain"))
+    implementation(project(":presentation"))
 
     implementation(Dependencies.kotlinStdlib)
     implementation(Dependencies.coreKTX)
     implementation(Dependencies.appcompat)
-    implementation(Dependencies.material)
-    implementation(Dependencies.constraintLayout)
-    implementation(Dependencies.swipeRefreshLayout)
-
-    implementation(Dependencies.lifecycleViewModelKTX)
-    implementation(Dependencies.lifecycleLiveDataKTX)
-
-    implementation(Dependencies.coroutinesAndroid)
-    implementation(Dependencies.coroutinesCore)
-
-    implementation(Dependencies.gson)
-
-    implementation(Dependencies.rxAndroid)
-    implementation(Dependencies.rxjava)
-    implementation(Dependencies.rxKotlin)
-
-    implementation(Dependencies.roundedImageView)
-
-    implementation(Dependencies.glide)
-    annotationProcessor(Dependencies.glideCompiler)
-
-    implementation(Dependencies.shimmer)
-
-    implementation(Dependencies.navigationFragment)
-    implementation(Dependencies.navigationUI)
 
     implementation(Dependencies.hiltAndroid)
     kapt(Dependencies.hiltAndroidCompiler)
-
-    testImplementation(Dependencies.jUnit)
-    androidTestImplementation(Dependencies.jUnitExt)
-    androidTestImplementation(Dependencies.expressoCore)
 }

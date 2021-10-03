@@ -7,10 +7,10 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.danhtt.assignment.R
 import com.danhtt.assignment.common.clickWithDebounce
-import com.danhtt.assignment.databinding.FragmentMainBinding
+import com.danhtt.assignment.presentation.R
 import com.danhtt.assignment.presentation.adapter.MainFragmentStateAdapter
+import com.danhtt.assignment.presentation.databinding.FragmentMainBinding
 import com.google.android.material.tabs.TabLayoutMediator
 
 class MainFragment : Fragment() {
