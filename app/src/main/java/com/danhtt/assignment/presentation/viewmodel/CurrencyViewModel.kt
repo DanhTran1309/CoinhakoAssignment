@@ -7,19 +7,22 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.danhtt.assignment.domain.model.Currency
 import com.danhtt.assignment.domain.model.StateEvent
+import com.danhtt.assignment.domain.usecase.AddFavoriteUseCase
+import com.danhtt.assignment.domain.usecase.DeleteFavoriteUseCase
+import com.danhtt.assignment.domain.usecase.GetAllCurrenciesUseCase
+import com.danhtt.assignment.domain.usecase.SortByUseCase
 import com.danhtt.assignment.presentation.SortByEnum
-import com.danhtt.assignment.presentation.usecase.AddFavoriteUseCase
-import com.danhtt.assignment.presentation.usecase.DeleteFavoriteUseCase
-import com.danhtt.assignment.presentation.usecase.GetAllCurrenciesUseCase
-import com.danhtt.assignment.presentation.usecase.SortByUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
-class CurrencyViewModel(
+@HiltViewModel
+class CurrencyViewModel @Inject constructor(
     private val getAllCurrenciesUseCase: GetAllCurrenciesUseCase,
     private val addFavoriteUseCase: AddFavoriteUseCase,
     private val deleteFavoriteUseCase: DeleteFavoriteUseCase,

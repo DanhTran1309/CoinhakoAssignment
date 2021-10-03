@@ -10,22 +10,27 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.danhtt.assignment.R
-import com.danhtt.assignment.common.presentation.clickWithDebounce
+import com.danhtt.assignment.common.clickWithDebounce
 import com.danhtt.assignment.databinding.FragmentSearchBinding
 import com.danhtt.assignment.domain.model.StateEvent
 import com.danhtt.assignment.presentation.viewmodel.CurrencyViewModel
 import com.danhtt.assignment.presentation.adapter.CurrencyAdapter
-import org.koin.android.viewmodel.ext.android.sharedViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class SearchFragment : Fragment() {
-    private val viewModel: CurrencyViewModel by sharedViewModel()
+    private val viewModel: CurrencyViewModel by lazy {
+        ViewModelProvider(requireActivity()).get(CurrencyViewModel::class.java)
+    }
 
     private lateinit var binding: FragmentSearchBinding
-    private lateinit var currencyAdapter: CurrencyAdapter
+    @Inject lateinit var currencyAdapter: CurrencyAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,8 +69,8 @@ class SearchFragment : Fragment() {
     }
 
     private fun initAdapter() {
-        currencyAdapter = CurrencyAdapter().also { adapter ->
-            adapter.setOnFavoriteClickListener { price ->
+        currencyAdapter.apply {
+            setOnFavoriteClickListener { price ->
                 if (price.isFavorite) {
                     viewModel.deleteFavorite(price.name)
                 } else {

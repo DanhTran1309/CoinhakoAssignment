@@ -1,7 +1,7 @@
 package com.danhtt.assignment.presentation.adapter
 
 import androidx.recyclerview.widget.RecyclerView
-import com.danhtt.assignment.common.presentation.clickWithDebounce
+import com.danhtt.assignment.common.clickWithDebounce
 import com.danhtt.assignment.databinding.AdapterCurrencyItemBinding
 import com.danhtt.assignment.domain.model.Currency
 

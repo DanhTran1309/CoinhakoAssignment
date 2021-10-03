@@ -9,6 +9,7 @@ import android.view.View
 import android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
 import com.danhtt.assignment.R
 import com.danhtt.assignment.databinding.ActivityMainBinding
@@ -16,13 +17,16 @@ import com.danhtt.assignment.domain.model.Currency
 import com.danhtt.assignment.domain.model.StateEvent
 import com.danhtt.assignment.presentation.receiver.NetworkReceiver
 import com.danhtt.assignment.presentation.viewmodel.CurrencyViewModel
-import org.koin.android.viewmodel.ext.android.viewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var networkReceiver: NetworkReceiver
     private lateinit var binding: ActivityMainBinding
 
-    private val viewModel: CurrencyViewModel by viewModel()
+    private val viewModel: CurrencyViewModel by lazy {
+        ViewModelProvider(this).get(CurrencyViewModel::class.java)
+    }
     private var backPressedTime = 0L
 
     @Suppress("DEPRECATION")

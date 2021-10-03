@@ -10,12 +10,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.danhtt.assignment.R
 import com.danhtt.assignment.databinding.AdapterCurrencyItemBinding
 import com.danhtt.assignment.domain.model.Currency
-import com.danhtt.assignment.presentation.usecase.FilterUseCase
-import org.koin.core.KoinComponent
-import org.koin.core.inject
+import com.danhtt.assignment.domain.usecase.FilterUseCase
+import javax.inject.Inject
 
-class CurrencyAdapter : RecyclerView.Adapter<CurrencyViewHolder>(), Filterable, KoinComponent {
-    private val filterUseCase: FilterUseCase by inject()
+class CurrencyAdapter @Inject constructor(
+    private val filterUseCase: FilterUseCase
+) : RecyclerView.Adapter<CurrencyViewHolder>(), Filterable {
 
     private val currencyList = mutableListOf<Currency>()
     private val currencyListFiltered = mutableListOf<Currency>()

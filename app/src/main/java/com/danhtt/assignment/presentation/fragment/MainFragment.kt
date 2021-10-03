@@ -8,7 +8,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.danhtt.assignment.R
-import com.danhtt.assignment.common.presentation.clickWithDebounce
+import com.danhtt.assignment.common.clickWithDebounce
 import com.danhtt.assignment.databinding.FragmentMainBinding
 import com.danhtt.assignment.presentation.adapter.MainFragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
