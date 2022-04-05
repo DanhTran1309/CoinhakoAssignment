@@ -39,7 +39,7 @@ android {
         }
     }
 
-    flavorDimensions("version")
+    flavorDimensions.add("version")
     productFlavors {
         create("development") {
             dimension = "version"
