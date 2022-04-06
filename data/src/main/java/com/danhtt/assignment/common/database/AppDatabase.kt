@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import com.danhtt.assignment.datasource.local.CurrencyEntity
 import com.danhtt.assignment.datasource.local.CurrencyFavoriteDao
 
-@Database(entities = [CurrencyEntity::class], version = 1)
+@Database(entities = [CurrencyEntity::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun currencyBookmarkDao(): CurrencyFavoriteDao
 }

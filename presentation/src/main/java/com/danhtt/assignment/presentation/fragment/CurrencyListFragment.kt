@@ -22,7 +22,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class CurrencyListFragment : Fragment() {
     private val viewModel: CurrencyViewModel by lazy {
-        ViewModelProvider(requireActivity()).get(CurrencyViewModel::class.java)
+        ViewModelProvider(requireActivity())[CurrencyViewModel::class.java]
     }
 
     private lateinit var binding: FragmentCurrencyListBinding
@@ -71,7 +71,7 @@ class CurrencyListFragment : Fragment() {
     }
 
     private fun observeDataChanged() {
-        viewModel.currenciesStateEvent.observe(viewLifecycleOwner, {
+        viewModel.currenciesStateEvent.observe(viewLifecycleOwner) {
             binding.swipeRefreshCurrencies.let { swipeRefresh ->
                 if (swipeRefresh.isRefreshing) {
                     swipeRefresh.isRefreshing = false
@@ -94,14 +94,14 @@ class CurrencyListFragment : Fragment() {
                 }
             }
 
-        })
+        }
 
-        viewModel.sortByLiveData.observe(viewLifecycleOwner, {
+        viewModel.sortByLiveData.observe(viewLifecycleOwner) {
             it ?: return@observe
             updateSortByArrow(it)
             val pricesSorted = viewModel.sortPriceList(it)
             currencyAdapter.updateData(if (isFavorite) pricesSorted.filter { price -> price.isFavorite } else pricesSorted)
-        })
+        }
     }
 
     private fun showLoadingView() {
@@ -136,7 +136,7 @@ class CurrencyListFragment : Fragment() {
             }
             setOnRefreshListener {
                 viewModel.getAllCurrencies()
-                viewModel.clearDisposable()
+                viewModel.cancelCoroutines()
                 viewModel.startIntervalUpdatePrices()
             }
         }

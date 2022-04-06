@@ -1,7 +1,6 @@
 plugins {
     id("com.android.library")
     id("kotlin-android")
-    id("kotlin-android-extensions")
     id("kotlin-kapt")
 }
 
@@ -37,7 +36,7 @@ android {
     }
 
     setPublishNonDefault(true)
-    flavorDimensions("version")
+    flavorDimensions.add("version")
     productFlavors {
         create("development") {
             dimension = "version"

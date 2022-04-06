@@ -18,11 +18,6 @@ object Dependencies {
     val retrofit by lazy { "com.squareup.retrofit2:retrofit:${Versions.retrofit}" }
     val retrofitConverterGson by lazy { "com.squareup.retrofit2:converter-gson:${Versions.retrofit}" }
     val gson by lazy { "com.google.code.gson:gson:${Versions.gson}" }
-    val koinAndroidViewModel by lazy { "org.koin:koin-android-viewmodel:${Versions.koin}" }
-    val koinAndroid by lazy { "org.koin:koin-android:${Versions.koin}" }
-    val rxjava by lazy { "io.reactivex.rxjava3:rxjava:${Versions.rx}" }
-    val rxAndroid by lazy { "io.reactivex.rxjava3:rxandroid:${Versions.rxAndroid}" }
-    val rxKotlin by lazy { "io.reactivex.rxjava3:rxkotlin:${Versions.rxKotlin}" }
     val roundedImageView by lazy { "com.makeramen:roundedimageview:${Versions.roundedImageView}" }
     val glide by lazy { "com.github.bumptech.glide:glide:${Versions.glide}" }
     val glideCompiler by lazy { "com.github.bumptech.glide:compiler:${Versions.glide}" }

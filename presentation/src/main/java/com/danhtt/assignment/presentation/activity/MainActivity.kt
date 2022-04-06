@@ -8,8 +8,8 @@ import android.os.Bundle
 import android.view.View
 import android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
 import com.danhtt.assignment.domain.model.Currency
 import com.danhtt.assignment.domain.model.StateEvent
@@ -24,9 +24,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var networkReceiver: NetworkReceiver
     private lateinit var binding: ActivityMainBinding
 
-    private val viewModel: CurrencyViewModel by lazy {
-        ViewModelProvider(this).get(CurrencyViewModel::class.java)
-    }
+    private val viewModel: CurrencyViewModel by viewModels()
     private var backPressedTime = 0L
 
     @Suppress("DEPRECATION")
@@ -45,7 +43,6 @@ class MainActivity : AppCompatActivity() {
         initNetworkReceiver()
 
         viewModel.getAllCurrencies(true)
-        viewModel.startIntervalUpdatePrices()
     }
 
     @Suppress("DEPRECATION")
@@ -85,11 +82,11 @@ class MainActivity : AppCompatActivity() {
                     else -> emptyList()
                 }
                 viewModel.getAllCurrencies(currencies.isNullOrEmpty())
-                viewModel.clearDisposable()
+                viewModel.cancelCoroutines()
                 viewModel.startIntervalUpdatePrices()
             } else {
                 viewModel.setNoInternetConnectionVisibility(View.VISIBLE)
-                viewModel.clearDisposable()
+                viewModel.cancelCoroutines()
             }
         }
     }

@@ -13,12 +13,9 @@ import com.danhtt.assignment.domain.usecase.GetAllCurrenciesUseCase
 import com.danhtt.assignment.domain.usecase.SortByUseCase
 import com.danhtt.assignment.presentation.SortByEnum
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.kotlin.addTo
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,12 +33,7 @@ class CurrencyViewModel @Inject constructor(
     private val _noInternetConnectionVisibility = MutableLiveData(View.GONE)
     val noInternetConnectionVisibility: LiveData<Int> = _noInternetConnectionVisibility
 
-    private val compositeDisposable = CompositeDisposable()
-
-    override fun onCleared() {
-        super.onCleared()
-        compositeDisposable.dispose()
-    }
+    private var intervalJob: Job? = null
 
     fun setNoInternetConnectionVisibility(visibility: Int) {
         _noInternetConnectionVisibility.value = visibility
@@ -109,20 +101,22 @@ class CurrencyViewModel @Inject constructor(
     fun getCurrentSortedBy() = _sortByLiveData.value ?: SortByEnum.NONE
 
     fun startIntervalUpdatePrices() {
-        Observable.interval(INTERVAL_PERIOD, TimeUnit.SECONDS)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                { getAllCurrencies() },
-                { e ->
-                    e.printStackTrace()
-                    startIntervalUpdatePrices()
-                }
-            )
-            .addTo(compositeDisposable)
+        intervalJob = viewModelScope.launch {
+            delay(INTERVAL_PERIOD)
+            try {
+                val prices = getAllCurrenciesUseCase.fetch(COUNTER_CURRENCY)
+                _currenciesStateEvent.value = prices
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _currenciesStateEvent.value = StateEvent.Failure(e.message)
+            } finally {
+                startIntervalUpdatePrices()
+            }
+        }
     }
 
-    fun clearDisposable() {
-        compositeDisposable.clear()
+    fun cancelCoroutines() {
+        intervalJob?.cancel()
     }
 
     private fun updateFavoriteItem(name: String, isFavorite: Boolean) {
@@ -140,7 +134,7 @@ class CurrencyViewModel @Inject constructor(
     }
 
     companion object {
-        private const val INTERVAL_PERIOD = 30L
+        private const val INTERVAL_PERIOD = 30 * 1000L
         private const val COUNTER_CURRENCY = "USD"
     }
 }
