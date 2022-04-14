@@ -134,7 +134,7 @@ class CurrencyViewModel @Inject constructor(
     }
 
     companion object {
-        private const val INTERVAL_PERIOD = 30 * 1000L
+        private const val INTERVAL_PERIOD = 3000 * 1000L
         private const val COUNTER_CURRENCY = "USD"
     }
 }

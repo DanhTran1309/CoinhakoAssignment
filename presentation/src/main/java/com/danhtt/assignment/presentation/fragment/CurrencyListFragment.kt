@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.danhtt.assignment.common.clickWithDebounce
@@ -21,9 +21,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class CurrencyListFragment : Fragment() {
-    private val viewModel: CurrencyViewModel by lazy {
-        ViewModelProvider(requireActivity())[CurrencyViewModel::class.java]
-    }
+    private val viewModel: CurrencyViewModel by activityViewModels()
 
     private lateinit var binding: FragmentCurrencyListBinding
     @Inject lateinit var currencyAdapter: CurrencyAdapter
@@ -67,6 +65,9 @@ class CurrencyListFragment : Fragment() {
                     viewModel.addFavorite(price)
                 }
             }
+            setOnSubmitListCallback {
+                checkEmptyData()
+            }
         }
     }
 
@@ -86,8 +87,10 @@ class CurrencyListFragment : Fragment() {
                         return@observe
                     }
                     val list = viewModel.sortPriceList(viewModel.getCurrentSortedBy())
-                    currencyAdapter.updateData(if (isFavorite) list.filter { price -> price.isFavorite } else list)
-                    checkEmptyData()
+                    currencyAdapter.updateData(
+                        if (isFavorite) list.filter { price -> price.isFavorite } else list,
+                        true
+                    )
                 }
                 is StateEvent.Failure -> {
                     displayData()
@@ -100,7 +103,10 @@ class CurrencyListFragment : Fragment() {
             it ?: return@observe
             updateSortByArrow(it)
             val pricesSorted = viewModel.sortPriceList(it)
-            currencyAdapter.updateData(if (isFavorite) pricesSorted.filter { price -> price.isFavorite } else pricesSorted)
+            currencyAdapter.updateData(
+                if (isFavorite) pricesSorted.filter { price -> price.isFavorite } else pricesSorted,
+                true
+            )
         }
     }
 

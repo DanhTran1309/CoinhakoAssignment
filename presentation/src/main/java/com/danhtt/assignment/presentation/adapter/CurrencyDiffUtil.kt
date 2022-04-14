@@ -1,30 +1,31 @@
 package com.danhtt.assignment.presentation.adapter
 
-import android.util.Log
+import android.os.Bundle
 import androidx.recyclerview.widget.DiffUtil
 import com.danhtt.assignment.domain.model.Currency
 
-class CurrencyDiffUtil(
-    private val oldList: List<Currency>,
-    private val newList: List<Currency>
-) : DiffUtil.Callback() {
+class CurrencyDiffUtil : DiffUtil.ItemCallback<Currency>() {
 
-    override fun getOldListSize() = oldList.size
-
-    override fun getNewListSize() = newList.size
-
-    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        val oldItem = oldList[oldItemPosition]
-        val newItem = newList[newItemPosition]
+    override fun areItemsTheSame(oldItem: Currency, newItem: Currency): Boolean {
         return oldItem.name == newItem.name && oldItem.base == newItem.base
     }
 
-    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        val oldItem = oldList[oldItemPosition]
-        val newItem = newList[newItemPosition]
+    override fun areContentsTheSame(oldItem: Currency, newItem: Currency): Boolean {
         return oldItem == newItem
-//        return oldItem.sellPrice == newItem.sellPrice
-//                && oldItem.buyPrice == newItem.buyPrice
-//                && oldItem.isFavorite == newItem.isFavorite
+    }
+
+    override fun getChangePayload(oldItem: Currency, newItem: Currency): Any {
+        return Bundle().also {
+            it.putBoolean(EXTRA_IS_FAVORITE_CHANGED, oldItem.isFavorite != newItem.isFavorite)
+            it.putBoolean(
+                EXTRA_IS_PRICE_CHANGED,
+                oldItem.buyPrice != newItem.buyPrice || oldItem.sellPrice != newItem.sellPrice
+            )
+        }
+    }
+
+    companion object {
+        const val EXTRA_IS_FAVORITE_CHANGED = "EXTRA_IS_FAVORITE_CHANGED"
+        const val EXTRA_IS_PRICE_CHANGED = "EXTRA_IS_PRICE_CHANGED"
     }
 }

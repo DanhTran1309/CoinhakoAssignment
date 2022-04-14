@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,9 +25,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class SearchFragment : Fragment() {
-    private val viewModel: CurrencyViewModel by lazy {
-        ViewModelProvider(requireActivity()).get(CurrencyViewModel::class.java)
-    }
+    private val viewModel: CurrencyViewModel by activityViewModels()
 
     private lateinit var binding: FragmentSearchBinding
     @Inject lateinit var currencyAdapter: CurrencyAdapter
@@ -77,6 +75,9 @@ class SearchFragment : Fragment() {
                     viewModel.addFavorite(price)
                 }
             }
+            setOnSubmitListCallback { isSearching ->
+                checkEmptyData(isSearching)
+            }
         }
     }
 
@@ -89,7 +90,7 @@ class SearchFragment : Fragment() {
     }
 
     private fun observeDataChanged() {
-        viewModel.currenciesStateEvent.observe(viewLifecycleOwner, {
+        viewModel.currenciesStateEvent.observe(viewLifecycleOwner) {
             when (it) {
                 is StateEvent.Loading -> Unit
                 is StateEvent.Success -> {
@@ -99,15 +100,14 @@ class SearchFragment : Fragment() {
                     }
                     val searchText = binding.edtSearchInput.text?.trim()
                     currencyAdapter.updateData(data, searchText.isNullOrEmpty())
-                    checkEmptyData(false)
                     if (searchText.isNullOrEmpty()) {
                         return@observe
                     }
-                    currencyAdapter.filter.filter(searchText) { checkEmptyData(true) }
+                    currencyAdapter.filter.filter(searchText)
                 }
                 is StateEvent.Failure -> Unit
             }
-        })
+        }
     }
 
     private fun setupSearchEditText() {
@@ -116,7 +116,7 @@ class SearchFragment : Fragment() {
 
             override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 binding.imvClearSearch.visibility = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
-                currencyAdapter.filter.filter(s) { checkEmptyData(true) }
+                currencyAdapter.filter.filter(s)
             }
 
             override fun afterTextChanged(p0: Editable?) = Unit
@@ -126,6 +126,7 @@ class SearchFragment : Fragment() {
     private fun checkEmptyData(isSearching: Boolean) {
         if (currencyAdapter.itemCount != 0) {
             binding.recyclerCurrencies.visibility = View.VISIBLE
+            binding.recyclerCurrencies.scrollToPosition(0)
             binding.tvEmptyData.visibility = View.GONE
             return
         }

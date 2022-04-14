@@ -1,12 +1,12 @@
 package com.danhtt.assignment.presentation.adapter
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.databinding.DataBindingUtil
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.ListAdapter
 import com.danhtt.assignment.domain.model.Currency
 import com.danhtt.assignment.domain.usecase.FilterUseCase
 import com.danhtt.assignment.presentation.R
@@ -15,11 +15,11 @@ import javax.inject.Inject
 
 class CurrencyAdapter @Inject constructor(
     private val filterUseCase: FilterUseCase
-) : RecyclerView.Adapter<CurrencyViewHolder>(), Filterable {
+) : ListAdapter<Currency, CurrencyViewHolder>(CurrencyDiffUtil()), Filterable {
 
     private val currencyList = mutableListOf<Currency>()
-    private val currencyListFiltered = mutableListOf<Currency>()
     private var onFavoriteClickListener: ((Currency) -> Unit)? = null
+    private var onSubmitListCallback: ((Boolean) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CurrencyViewHolder {
         val binding: AdapterCurrencyItemBinding = DataBindingUtil.inflate(
@@ -32,18 +32,42 @@ class CurrencyAdapter @Inject constructor(
     }
 
     override fun onBindViewHolder(holder: CurrencyViewHolder, position: Int) {
-        holder.bindData(currencyListFiltered[position], onFavoriteClickListener)
+        holder.bindData(currentList[position]) {
+            onFavoriteClickListener?.invoke(currencyList[position])
+        }
     }
 
-    override fun getItemCount() = currencyListFiltered.size
+    override fun onBindViewHolder(
+        holder: CurrencyViewHolder,
+        position: Int,
+        payloads: MutableList<Any>
+    ) {
+        if (payloads.isNullOrEmpty() || payloads[0] !is Bundle) {
+            super.onBindViewHolder(holder, position, payloads)
+            return
+        }
+        val currentCurrency = currentList[position]
+        val bundle = payloads[0] as Bundle
+        val isFavoriteChanged = bundle.getBoolean(CurrencyDiffUtil.EXTRA_IS_FAVORITE_CHANGED)
+        val isPriceChanged = bundle.getBoolean(CurrencyDiffUtil.EXTRA_IS_PRICE_CHANGED)
+        if (isFavoriteChanged) {
+            holder.updateFavorite(currentCurrency.isFavorite)
+        }
+        if (isPriceChanged) {
+            holder.updatePrice(currentCurrency.buyPrice, currentCurrency.sellPrice)
+        }
+    }
 
-    fun updateData(currencies: List<Currency>, isNotifyDataSetChanged: Boolean = true) {
+    override fun getItemCount() = currentList.size
+
+    fun updateData(currencies: List<Currency>, isNotifyDataSetChanged: Boolean) {
         currencyList.clear()
         currencyList.addAll(currencies)
-        currencyListFiltered.clear()
-        currencyListFiltered.addAll(currencies)
         if (isNotifyDataSetChanged) {
-            notifyDataSetChanged()
+            val currenciesCopy = currencies.map { it.copy() }
+            submitList(currenciesCopy) {
+                onSubmitListCallback?.invoke(false)
+            }
         }
     }
 
@@ -51,20 +75,25 @@ class CurrencyAdapter @Inject constructor(
         onFavoriteClickListener = listener
     }
 
+    fun setOnSubmitListCallback(listener: (Boolean) -> Unit) {
+        onSubmitListCallback = listener
+    }
+
     override fun getFilter(): Filter {
         return object :Filter() {
             override fun performFiltering(query: CharSequence?): FilterResults {
-                return FilterResults().also { it.values = filterUseCase.searchByName(query?.toString(), currencyList) }
+                return FilterResults().also {
+                    it.values = filterUseCase.searchByName(query?.toString(), currencyList)
+                }
             }
 
             @Suppress("UNCHECKED_CAST")
             override fun publishResults(p0: CharSequence?, filterResults: FilterResults?) {
                 val currencies = (filterResults?.values as? List<Currency>) ?: currencyList
-                val diffCallback = CurrencyDiffUtil(currencyListFiltered, currencies)
-                val diffResult = DiffUtil.calculateDiff(diffCallback)
-                currencyListFiltered.clear()
-                currencyListFiltered.addAll(currencies)
-                diffResult.dispatchUpdatesTo(this@CurrencyAdapter)
+                val currenciesCopy = currencies.map { it.copy() }
+                submitList(currenciesCopy) {
+                    onSubmitListCallback?.invoke(true)
+                }
             }
         }
     }
